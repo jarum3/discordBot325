@@ -10,6 +10,5 @@ client.on('ready', () => {
 });
 
 
-
 // Last line
 client.login(process.env.CLIENT_TOKEN);
