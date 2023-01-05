@@ -2,7 +2,7 @@
 require('dotenv').config();
 const fs = require('node:fs');
 const path = require('node:path');
-const { Client, Collection, Events, IntentsBitField } = require('discord.js');
+const { Client, Collection, IntentsBitField } = require('discord.js');
 const botIntents = new IntentsBitField();
 // Declaring intents
 botIntents.add(IntentsBitField.Flags.GuildMessages);
@@ -26,29 +26,20 @@ for (const file of commandFiles) {
     console.log(`[WARNING] The command at ${filePath} is missing a required "data" or "execute" property.`);
   }
 }
-// Startup message, only listens once
-client.once(Events.ClientReady, c => {
-  console.log(`logged in as ${c.user.tag}!`);
-});
 
-// Listener that logs each slash command when it is created, for testing purposes.
-client.on(Events.InteractionCreate, async interaction => {
-  if (!interaction.isChatInputCommand()) return;
-  const command = interaction.client.commands.get(interaction.commandName); // Set command equal to the object in the command file.
-  if (!command) {
-    console.error(`No command matching ${interaction.commandName} was found.`); // Print out an error if no command was found
-    return;
-  }
+const eventsPath = path.join(__dirname, 'events');
+const eventFiles = fs.readdirSync(eventsPath).filter(file => file.endsWith('.js'));
 
-  try {
-    await command.execute(interaction); // Run the execute block of the command
+for (const file of eventFiles) {
+  const filePath = path.join(eventsPath, file);
+  const event = require(filePath);
+  if (event.once) { // If the event only runs once, use once
+    client.once(event.name, (...args) => event.execute(...args)); // Using rest and spread to pass all arguments
   }
-  catch (error) {
-    console.error(error);
-    await interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true });
+  else {
+    client.on(event.name, (...args) => event.execute(...args));
   }
-});
-
+}
 
 // Last line
 client.login(process.env.CLIENT_TOKEN);
