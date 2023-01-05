@@ -25,7 +25,7 @@ const rest = new REST({ version: '10' }).setToken(process.env.CLIENT_TOKEN);
     console.log(`Started refreshing ${commands.length} application (/) commands.`);
 
     const data = await rest.put(
-      Routes.applicationGuildCommands(process.env.CLIENT_ID, process.env.GUILD_ID),
+      Routes.applicationGuildCommands(process.env.CLIENT_ID, process.env.GUILD_ID), // TODO: Remove the guild ID
       { body: commands },
     );
 
