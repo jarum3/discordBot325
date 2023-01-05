@@ -1,12 +1,14 @@
+// Dependencies
 require('dotenv').config();
-const { Client, IntentsBitField } = require('discord.js');
+const { Client, Events, IntentsBitField } = require('discord.js');
 const botIntents = new IntentsBitField();
+// Declaring intents
 botIntents.add(IntentsBitField.Flags.GuildMessages);
-const client = new Client({ intents: botIntents });
+const client = new Client({ intents: botIntents }); // Creates client with intents in botIntents
 
-
-client.on('ready', () => {
-  console.log(`logged in as ${client.user.tag}!`);
+// Startup message
+client.once(Events.ClientReady, c => {
+  console.log(`logged in as ${c.user.tag}!`);
 });
 
 
