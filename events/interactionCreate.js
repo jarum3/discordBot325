@@ -19,7 +19,8 @@ module.exports = {
     }
     if (interaction.isStringSelectMenu()) {
       const selected = interaction.values.join(',');
-      await interaction.update(`The user has selected ${selected}`);
+      const userReply = `The user has selected ${selected}`;
+      await interaction.reply({ content: userReply, ephemeral: true });
     }
   },
 };
